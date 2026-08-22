@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import HomeScreen from './src/screens/HomeScreen'
-import { colors } from './src/theme/colors'
+import ProfileScreen from './src/screens/ProfileScreen'
+import { colors } from './src/constants/colors'
 
 export default function App() {
   
   return (
     <SafeAreaView style={styles.container}>
-      <HomeScreen/>
+      <ProfileScreen />
     </SafeAreaView>
   )
 }
@@ -17,7 +17,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundColor,
     alignItems: 'center',
-    padding: 16,
-    gap: 24
-  }
-});
+  },
+})
