@@ -26,21 +26,19 @@ export default function ProfileCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: '100%',
-    height: '70%',
-    flexDirection: 'column',
+    width: '90%',
+    alignSelf: 'center',
     alignItems: 'center',
-    padding: 20,
-    borderRadius: 30,
+    padding: 24,
+    borderRadius: 24,
     backgroundColor: colors.white,
-    elevation: 4
+    elevation: 6
   },
 
   image: {
-    marginTop: 100,
     width: 200,
     height: 200,
-    borderRadius: 100,
+    borderRadius: 100
   },
 
   info: {
@@ -52,7 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     textAlign: 'center',
-    color: colors.purple
+    color: colors.primary
   },
 
   role: {

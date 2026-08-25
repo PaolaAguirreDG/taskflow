@@ -21,7 +21,7 @@ const HomeScreen = () => {
 
   const isButtonDisabled = title.trim().length < 3
 
-   const [taskList, setTaskList] = useState<Task[]>([])
+  const [taskList, setTaskList] = useState<Task[]>([])
 
   const handleAddTask = () => {
     let valid = true
