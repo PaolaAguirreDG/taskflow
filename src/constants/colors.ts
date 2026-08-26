@@ -29,5 +29,7 @@ export const colors = {
   cardBackgroundColor: '#FFFFFF',
 
   category: '#ddd6fe',
-  categorySelected: '#6d28d9'
+  categorySelected: '#6d28d9',
+  white: '#ffffff'
+
 }
