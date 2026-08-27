@@ -6,7 +6,7 @@ import { colors, textSize } from '../constants'
 import { useState } from 'react'
 import type { Task } from '../types'
 
-const categories = ['Trabajo', 'Estudio', 'Personal'] as const
+const categories = ['trabajo', 'estudio', 'personal'] as const
 
 const HomeScreen = () => {
   const [title, setTitle] = useState('')
@@ -46,8 +46,8 @@ const HomeScreen = () => {
       title,
       description,
       category,
-      done: false,
-      time: 'today'
+      date: 'today',
+      completed: false,
     }
 
     console.log(newTask)

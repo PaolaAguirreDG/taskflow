@@ -7,11 +7,10 @@ type CardTask = {
 }
 
 const CardTask = ({ task }: CardTask) => {
-  const taskSpanish: Record<Task['time'], string> = {
+  const taskSpanish: Record<Task['date'], string> = {
     today: 'Hoy',
     tomorrow: 'Mañana',
-    week: 'Semana',
-    month: 'Mes'
+    nextWeek: 'Próxima semana'
   }
   
   return (
@@ -22,10 +21,10 @@ const CardTask = ({ task }: CardTask) => {
       </View>
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
-          <Text style={{ color: task.done ? 'green' : 'red' }}>
-            {task.done ? 'Resuelta' : 'No Resuelta'}
+          <Text style={{ color: task.completed ? 'green' : 'red' }}>
+            {task.completed ? 'Resuelta' : 'No Resuelta'}
           </Text>
-          <Text style={{ fontSize: 16}}>{taskSpanish[task.time]}</Text>
+          <Text style={{ fontSize: 16}}>{taskSpanish[task.date]}</Text>
       </View> 
     </View>
   )
