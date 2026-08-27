@@ -46,12 +46,12 @@ export default function TaskDetailScreen({ task, onBack, onToggle, onDelete }: P
             <Text style={styles.metaValue}>{DUE_DATES[task.date]}</Text>
           </View>
 
-          <View style={styles.divider} />
+          {/* <View style={styles.divider} />
 
           <View style={styles.metaRow}>
             <Text style={styles.metaLabel}>ID</Text>
             <Text style={styles.metaId}>{task.id}</Text>
-          </View>
+          </View> */}
         </View>
 
         <Text style={styles.sectionLabel}>Descripción</Text>
@@ -62,7 +62,8 @@ export default function TaskDetailScreen({ task, onBack, onToggle, onDelete }: P
         </Text>
 
         <TouchableOpacity
-          style={[styles.action, task.completed ? styles.actionUndo : styles.actionDone]}
+          // style={[styles.action, task.completed ? styles.actionUndo : styles.actionDone]}
+          style={[styles.action, task.completed ? styles.actionUndo : { backgroundColor: cat.color }]}
           onPress={() => onToggle(task.id)}
           activeOpacity={0.85}
         >
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primary // color de marca = "esto es tocable"
+    color: colors.primaryDark // color de marca = "esto es tocable"
   },
   content: {
     gap: spacing.md,
@@ -152,11 +153,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.ink // oscuro: este SÍ es el dato
   },
-  metaId: {
-    fontSize: 12,
-    color: colors.muted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'
-  },
+  // metaId: {
+  //   fontSize: 12,
+  //   color: colors.muted,
+  //   fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'
+  // },
   divider: {
     height: 1,
     backgroundColor: colors.border,
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 15,
-    lineHeight: 23, // 15 × 1.53: este es el texto largo de la pantalla
+    lineHeight: 23, 
     color: colors.ink
   },
   action: {
@@ -182,14 +183,14 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm
   },
   actionDone: {
-    backgroundColor: colors.success // verde: completar
+    backgroundColor: colors.success 
   },
   actionUndo: {
-    backgroundColor: colors.dark // oscuro neutro: reabrir no es "positivo"
+    backgroundColor: colors.dark 
   },
   actionDelete: {
-    backgroundColor: colors.dangerSoft, // pastel, no rojo pleno
-    marginTop: 0 // pegado al botón de arriba: el `gap` del padre ya separa
+    backgroundColor: colors.dangerSoft, 
+    marginTop: 0 
   },
   actionText: {
     fontSize: 15,

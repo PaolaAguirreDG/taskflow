@@ -57,6 +57,7 @@ export default function App() {
             <View>
               <Text style={styles.brand}>TaskFlow</Text>
               <Text style={styles.subtitle}>Lista de tareas</Text>
+              <View style={styles.divider} />
             </View>
 
             {selectedTask ? (
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: spacing.lg,
-    gap: spacing.lg
+    gap: spacing.xs
   },
 
   brand: {
@@ -139,6 +140,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.muted,
     marginTop: spacing.xs
-  }
+  },
 
+  divider: {
+    height: 1.5,
+    backgroundColor: colors.border,
+    width: '100%',
+    marginTop: spacing.lg
+  }
 })
