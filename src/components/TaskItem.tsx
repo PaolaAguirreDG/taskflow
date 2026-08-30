@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { CATEGORIES, DUE_DATES, Task } from '../types'
-import { colors, radius, shadow, spacing } from '../constants'
+import { colors, radius, shadow, spacing } from '../theme'
 
 type Props = {
   task: Task

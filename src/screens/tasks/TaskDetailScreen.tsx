@@ -1,21 +1,23 @@
 import React from 'react'
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { CATEGORIES, DUE_DATES, Task } from '../types'
-import { colors, radius, shadow, spacing } from '../constants'
+import { CATEGORIES, DUE_DATES, Task } from '../../types'
+import { colors, radius, shadow, spacing, screenStyles } from '../../theme'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../navigation/types'
 
-type Props = {
-  task: Task
-  onBack: () => void
-  onToggle: (id: string) => void
-  onDelete: (id: string) => void
-}
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  'TaskDetail'
+>
 
-export default function TaskDetailScreen({ task, onBack, onToggle, onDelete }: Props) {
+export default function TaskDetailScreen({ navigation, route }: Props) {
+  //console.log('route.params:', route.params)
+  const { task } = route.params
   const cat = CATEGORIES[task.category]
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={onBack} hitSlop={8}>
+    <View style={screenStyles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} hitSlop={8}>
         <Text style={styles.backText}>‹ Volver a la lista</Text>
       </TouchableOpacity>
 
@@ -46,12 +48,12 @@ export default function TaskDetailScreen({ task, onBack, onToggle, onDelete }: P
             <Text style={styles.metaValue}>{DUE_DATES[task.date]}</Text>
           </View>
 
-          {/* <View style={styles.divider} />
+          <View style={styles.divider} />
 
           <View style={styles.metaRow}>
             <Text style={styles.metaLabel}>ID</Text>
             <Text style={styles.metaId}>{task.id}</Text>
-          </View> */}
+          </View>
         </View>
 
         <Text style={styles.sectionLabel}>Descripción</Text>
@@ -60,9 +62,7 @@ export default function TaskDetailScreen({ task, onBack, onToggle, onDelete }: P
           {task.description ||
             'Esta tarea no tiene descripción. Podés agregarla desde el formulario al crear la próxima.'}
         </Text>
-
-        <TouchableOpacity
-          // style={[styles.action, task.completed ? styles.actionUndo : styles.actionDone]}
+        {/* <TouchableOpacity
           style={[styles.action, task.completed ? styles.actionUndo : { backgroundColor: cat.color }]}
           onPress={() => onToggle(task.id)}
           activeOpacity={0.85}
@@ -78,7 +78,7 @@ export default function TaskDetailScreen({ task, onBack, onToggle, onDelete }: P
           activeOpacity={0.85}
         >
           <Text style={[styles.actionText, { color: colors.danger }]}>Eliminar tarea</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </View>
   )
@@ -153,11 +153,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.ink // oscuro: este SÍ es el dato
   },
-  // metaId: {
-  //   fontSize: 12,
-  //   color: colors.muted,
-  //   fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'
-  // },
+  metaId: {
+    fontSize: 12,
+    color: colors.muted,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'
+  },
   divider: {
     height: 1,
     backgroundColor: colors.border,

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import {  KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { CATEGORIES, Category, createId, DueDate, DUE_DATES, Task } from '../types'
-import { colors, radius, shadow, spacing } from '../constants'
+import { colors, radius, shadow, spacing } from '../theme'
 
 type Props = {
   onAdd: (task: Task) => void

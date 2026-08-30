@@ -1,6 +1,6 @@
 import { View, Text, Image, StyleSheet } from 'react-native'
 import avatar from '../assets/avatar.webp'
-import { colors, shadows } from '../constants'
+import { colors, shadows } from '../theme'
 
 type HeaderProps = {
     name: string,

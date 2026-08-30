@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { colors, radius, spacing } from '../constants'
+import { colors, radius, spacing } from '../theme'
 
 export function useMountCounter() {
   const [mounted, setMounted] = useState(0)

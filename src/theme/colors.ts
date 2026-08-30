@@ -36,5 +36,6 @@ export const colors = {
 
   // Utility
   white: '#ffffff',
+  inactive: '#9ca3af',
 
 } as const

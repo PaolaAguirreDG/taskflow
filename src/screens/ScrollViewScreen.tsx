@@ -1,7 +1,7 @@
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Task } from '../types'
-import { colors, radius, spacing } from '../constants'
+import { colors, radius, spacing } from '../theme'
 import TaskItem from '../components/TaskItem'
 import EmptyState from '../components/EmptyState'
 import MountBadge, { useMountCounter } from '../components/MountBadge'

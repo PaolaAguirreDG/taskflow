@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TabKey } from '../types'
-import { colors, radius, spacing } from '../constants'
+import { colors, radius, spacing } from '../theme'
 
 type Props = {
   active: TabKey

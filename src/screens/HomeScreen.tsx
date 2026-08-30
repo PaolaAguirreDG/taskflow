@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, Pressable, Alert } from 'react-nativ
 import Header from '../components/Header'
 import CardTask from '../components/CardTask'
 import { name } from '../data'
-import { colors, textSize } from '../constants'
+import { colors, textSize } from '../theme'
 import { useState } from 'react'
 import type { Task } from '../types'
 
