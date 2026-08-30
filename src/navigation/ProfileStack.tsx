@@ -14,7 +14,7 @@ const ProfileStack = () => {
                 name="Profile"
                 component={ProfileScreen}
                 options={{
-                    title:"Mis perfil"
+                    title:"Mi perfil"
                 }}
             />
         </Stack.Navigator>
