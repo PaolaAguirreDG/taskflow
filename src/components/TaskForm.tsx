@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {  KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { CATEGORIES, Category, createId, DueDate, DUE_DATES } from '../types'
+import { CATEGORIES, Category, DueDate, DUE_DATES } from '../types'
 import { colors, radius, shadow, spacing } from '../theme'
 import { useAppDispatch } from '../store/hooks'
 import { addTask } from '../features/tasks/tasksSlice'
