@@ -3,9 +3,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import TasksScreen from '../screens/tasks/TasksScreen'
 import TaskDetailScreen from '../screens/tasks/TaskDetailScreen'
 
-import { RootStackParamList } from './types'
+import { TaskStackParamList } from './types'
 
-const Stack = createNativeStackNavigator<RootStackParamList>()
+const Stack = createNativeStackNavigator<TaskStackParamList>()
 
 const TaskStack = () => {
     return (
@@ -14,7 +14,8 @@ const TaskStack = () => {
                 name="Tasks"
                 component={TasksScreen}
                 options={{
-                    headerShown: false,
+                  headerShown: false,
+                  title:"Mis tareas"
                 }}
             />
             <Stack.Screen
@@ -23,7 +24,7 @@ const TaskStack = () => {
                 options={{
                     title:"Detalles de la tarea"
                 }}
-                />
+            />
         </Stack.Navigator>
     )
 }

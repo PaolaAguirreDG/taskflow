@@ -45,7 +45,7 @@ const raw: Array<[string, string, Task['category'], Task['date'], boolean]> = [
 ]
 
 export const SEED_TASKS: Task[] = raw.map(([title, description, category, date, completed], i) => ({
-  id: `seed-${title}-${description}-${i}-${date}`,
+  id: `seed-${i + 1}`,
   title,
   description,
   category,

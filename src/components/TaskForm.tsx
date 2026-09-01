@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
 import {  KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { CATEGORIES, Category, createId, DueDate, DUE_DATES, Task } from '../types'
+import { CATEGORIES, Category, createId, DueDate, DUE_DATES } from '../types'
 import { colors, radius, shadow, spacing } from '../theme'
+import { useAppDispatch } from '../store/hooks'
+import { addTask } from '../features/tasks/tasksSlice'
 
-type Props = {
-  onAdd: (task: Task) => void
-}
 
 const CATEGORY_KEYS = Object.keys(CATEGORIES) as Category[]
 const DATE_KEYS = Object.keys(DUE_DATES) as DueDate[]
 
-export default function TaskForm({ onAdd }: Props) {
+export default function TaskForm() {
+  const dispatch = useAppDispatch()
   const insets = useSafeAreaInsets()
 
   const [open, setOpen] = useState(false)
@@ -28,16 +28,14 @@ export default function TaskForm({ onAdd }: Props) {
 
   const handleSubmit = () => {
     if (!canSubmit) return
-
-    onAdd({
-      id: createId(),
-      title: title.trim(),
-      description: description.trim(),
-      category,
-      date,
-      completed: false
-    })
-
+    dispatch(
+      addTask({
+        title: title.trim(),
+        description: description.trim(),
+        category,
+        date
+      })
+    )
     setTitle('')
     setDescription('')
     setCategory('personal')

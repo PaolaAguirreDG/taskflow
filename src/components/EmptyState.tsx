@@ -1,12 +1,23 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { colors, spacing } from '../theme'
+import type { TaskFilter } from '../features/tasks/tasksSlice'
 
-export default function EmptyState() {
+type Props = {
+  filter?: TaskFilter
+}
+
+export default function EmptyState({ filter = 'all' } : Props) {
+  const MESSAGES: Record<TaskFilter, string> = {
+  all: '¡No tienes tareas!',
+  pending: '¡No tienes tareas pendientes!',
+  completed: 'No tienes tareas completadas'
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>🗒️</Text>
-      <Text style={styles.title}>¡No tienes tareas pendientes!</Text>
+      <Text style={styles.title}>{MESSAGES[filter]}</Text>
       <Text style={styles.subtitle}>Empieza por crear una con el botón de abajo.</Text>
     </View>
   )

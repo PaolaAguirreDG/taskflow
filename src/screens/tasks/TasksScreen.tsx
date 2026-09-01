@@ -1,52 +1,44 @@
-
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { View, Text, FlatList, StyleSheet } from 'react-native'
 import { Task } from '../../types'
 import { spacing, colors, screenStyles } from '../../theme'
 import TaskItem from '../../components/TaskItem'
 import EmptyState from '../../components/EmptyState'
-import { SEED_TASKS } from '../../data/seed'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../navigation/types'
+import { TaskStackParamList } from '../../navigation/types'
 import TaskForm from '../../components/TaskForm'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import {
+  selectFilteredTasks,
+  selectTaskStats,
+  toggleTaskStatus,
+  selectFilter
+} from '../../features/tasks/tasksSlice'
+import FilterBar from '../../components/FilterBar'
 
-
-type NavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Tasks'
-  >
+type NavigationProp = NativeStackNavigationProp<TaskStackParamList, 'Tasks'>
 
 const keyExtractor = (item: Task) => item.id
 
+
 const TasksScreen = ({navigation}: {navigation: NavigationProp}) => {
-  const [tasks, setTasks] = useState<Task[]>(SEED_TASKS);
-  const pending = tasks.filter((t) => !t.completed).length
+  const dispatch = useAppDispatch()
 
-  const addTask = useCallback((task: Task) => {
-    setTasks((prev) => [task, ...prev])
-  }, []);
+  const tasks = useAppSelector(selectFilteredTasks)
+  const { pending, total } = useAppSelector(selectTaskStats)
 
-  const toggleTask = useCallback ((id: string) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
-    );
-  }, []);
-
-  const openDetail = useCallback (
-    (task: Task) => {
-      navigation.navigate("TaskDetail", {task});
+  const toggleTask = useCallback(
+    (id: string) => {
+      dispatch(toggleTaskStatus(id))
     },
-    [navigation],
-  );
+    [dispatch]
+  )
 
-  const renderItem = useCallback(({ item }: { item: Task }) => {
-      return (
-        <TaskItem task={item} onToggle={toggleTask} onPress={openDetail} />
-      )
+  const renderItem = useCallback(
+    ({ item }: { item: Task }) => {
+      return <TaskItem task={item} onToggle={toggleTask} onPress={() => navigation.navigate('TaskDetail', { taskId: item.id})} />
     },
-    [toggleTask, openDetail]
+    [toggleTask]
   )
 
   return (
@@ -65,24 +57,24 @@ const TasksScreen = ({navigation}: {navigation: NavigationProp}) => {
         </View>
 
         <Text style={styles.subtitle}>
-          {pending === 0 && tasks.length > 0
-            ? '¡Todo completado! 🎉'
-            : 'Tocá una tarea para ver su detalle'}
+          {pending} tareas pendientes de {total}
         </Text>
       </View>
+      <FilterBar>
 
+      </FilterBar>
       <FlatList
         data={tasks}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         contentContainerStyle={styles.listContent}
-        ListEmptyComponent={<EmptyState />}
+        ListEmptyComponent={<EmptyState filter={useAppSelector(selectFilter)} />}
         initialNumToRender={8}
         windowSize={7}
         maxToRenderPerBatch={8}
       />
       
-      <TaskForm onAdd={addTask}/>
+      <TaskForm/>
     </View>
   )
 }

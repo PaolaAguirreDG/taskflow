@@ -1,8 +1,14 @@
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { colors, spacing, shadows } from '../../theme'
+import { useAppSelector } from '../../store/hooks'
+import { FILTERS, selectFilter, selectTaskStats } from '../../features/tasks/tasksSlice'
+import { name } from '../../data'
 
 const ProfileScreen = () => {
+  const { total, completed, pending } = useAppSelector(selectTaskStats)
+  const filter = useAppSelector(selectFilter)
+  const progress = total === 0 ? 0 : Math.round((completed / total) * 100)
   return (
     <View style={styles.container}>
 
@@ -36,17 +42,17 @@ const ProfileScreen = () => {
           <View style={styles.stats}>
 
             <View style={styles.statCard}>
-              <Text style={styles.statNumber}>20</Text>
+              <Text style={styles.statNumber}>{total}</Text>
               <Text style={styles.statLabel}>Tareas</Text>
             </View>
 
             <View style={styles.statCard}>
-              <Text style={styles.statNumber}>8</Text>
-              <Text style={styles.statLabel}>Hechas</Text>
+              <Text style={styles.statNumber}>{completed}</Text>
+              <Text style={styles.statLabel}>Completadas</Text>
             </View>
 
             <View style={styles.statCard}>
-              <Text style={styles.statNumber}>12</Text>
+              <Text style={styles.statNumber}>{pending}</Text>
               <Text style={styles.statLabel}>Pendientes</Text>
             </View>
 
@@ -81,15 +87,19 @@ const ProfileScreen = () => {
       <View style={styles.progressCard}>
         <View style={styles.progressHeader}>
           <Text style={styles.sectionTitle}>Progreso semanal</Text>
-          <Text style={styles.progressValue}>40%</Text>
+          <Text style={styles.progressValue}>{progress}%</Text>
         </View>
 
         <View style={styles.progressBackground}>
-          <View style={styles.progress} />
+          <View
+            style={[
+              styles.progress,
+              { width: `${progress}%` }
+            ]}
+          />
         </View>
-
         <Text style={styles.progressText}>
-          8 de 20 tareas completadas
+          {completed} de {total} tareas completadas
         </Text>
       </View>
 
@@ -251,7 +261,6 @@ const styles = StyleSheet.create({
   },
 
   progress: {
-    width: '40%',
     height: '100%',
     backgroundColor: colors.primary
   },

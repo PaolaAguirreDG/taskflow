@@ -1,8 +1,22 @@
-import { Task } from '../types'
+import type { NavigatorScreenParams } from '@react-navigation/native'
 
-export type RootStackParamList = {
-    Tasks: undefined
-    TaskDetail: {
-        task: Task
-    }
+export type TaskStackParamList = {
+  Tasks: undefined
+  TaskDetail: {
+    taskId: string
+  }
+}
+
+export type ProfileStackParamList = {
+  Profile: undefined
+}
+
+export type TabParamList = {
+  TaskStack: NavigatorScreenParams<TaskStackParamList>
+  ProfileStack: NavigatorScreenParams<ProfileStackParamList>
+}
+
+export type AuthStackParamList = {
+  Login: undefined
+  Register: undefined
 }
