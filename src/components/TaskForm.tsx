@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 import {  KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { CATEGORIES, Category, DueDate, DUE_DATES } from '../types'
+import type { TaskStackParamList } from '../navigation/types'
 import { colors, radius, shadow, spacing } from '../theme'
 import { useAppDispatch } from '../store/hooks'
 import { addTask } from '../features/tasks/tasksSlice'
 
+type TaskFormNavigationProp =
+  NativeStackNavigationProp<TaskStackParamList, 'Tasks'>
 
 const CATEGORY_KEYS = Object.keys(CATEGORIES) as Category[]
 const DATE_KEYS = Object.keys(DUE_DATES) as DueDate[]
@@ -13,6 +18,7 @@ const DATE_KEYS = Object.keys(DUE_DATES) as DueDate[]
 export default function TaskForm() {
   const dispatch = useAppDispatch()
   const insets = useSafeAreaInsets()
+  const navigation = useNavigation<TaskFormNavigationProp>()
 
   const [open, setOpen] = useState(false)
 
@@ -41,6 +47,7 @@ export default function TaskForm() {
     setCategory('personal')
     setDate('today')
     close()
+    navigation.navigate('Tasks')
   }
 
   return (
