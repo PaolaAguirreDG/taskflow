@@ -1,186 +1,66 @@
-# TaskFlow 📋
+## ✅ Módulo 07 – Firebase: Autenticación y Persistencia
 
-TaskFlow es una aplicación móvil de gestión de tareas desarrollada con **React Native, Expo y TypeScript**.
+En este módulo se integró **Firebase** a TaskFlow para incorporar autenticación de usuarios y persistencia de tareas en la nube.
 
-La aplicación permite crear, visualizar, filtrar, completar y eliminar tareas, utilizando **Redux Toolkit** para administrar el estado global y mantener la información sincronizada entre las distintas pantallas.
+### 🔐 Autenticación
 
-## 🚀 Tecnologías utilizadas
+La aplicación utiliza **Firebase Authentication** mediante email y contraseña.
 
-* React Native
-* Expo
-* TypeScript
-* React Navigation
+Se implementaron los siguientes flujos:
+
+* Registro de nuevos usuarios mediante `createUserWithEmailAndPassword`.
+* Inicio de sesión mediante `signInWithEmailAndPassword`.
+* Cierre de sesión mediante `signOut`.
+* Persistencia de sesión utilizando `AsyncStorage`.
+* Recuperación automática del usuario mediante `onAuthStateChanged`.
+* Navegación protegida: los usuarios no autenticados acceden al flujo de Login/Register y los usuarios autenticados acceden a la aplicación.
+
+El usuario autenticado también se almacena en Redux para que su información esté disponible en toda la aplicación.
+
+### ☁️ Persistencia con Cloud Firestore
+
+Las tareas dejaron de almacenarse únicamente de forma local y ahora se guardan en una colección `tasks` de **Cloud Firestore**.
+
+Cada tarea contiene el `userId` correspondiente al usuario autenticado, permitiendo asociar los datos a su propietario.
+
+Se implementaron las siguientes operaciones:
+
+* Crear nuevas tareas.
+* Obtener las tareas del usuario autenticado.
+* Actualizar su estado entre pendiente y completada.
+* Eliminar tareas.
+* Escuchar cambios en tiempo real mediante `onSnapshot`.
+
+Las consultas a Firestore se filtran por `userId`, de manera que cada usuario visualiza únicamente sus propias tareas.
+
+Los datos obtenidos desde Firestore se sincronizan con el store de **Redux Toolkit**, manteniendo el funcionamiento de los filtros, contadores y estadísticas de tareas.
+
+### 🧪 Pruebas realizadas
+
+Para verificar el flujo de autenticación se realizaron las siguientes pruebas:
+
+1. Registro de un nuevo usuario desde la pantalla de registro.
+2. Acceso automático a la aplicación después del registro.
+3. Cierre de sesión y posterior inicio de sesión con el usuario creado.
+4. Intento de inicio de sesión con credenciales incorrectas para comprobar la visualización del mensaje de error.
+5. Cierre y reapertura de la aplicación para comprobar que la sesión permanece activa.
+
+Para verificar la persistencia de tareas:
+
+1. Se creó una nueva tarea desde TaskFlow.
+2. Se comprobó su aparición en la colección `tasks` de Firebase Firestore.
+3. Se verificó que el documento contenga el `userId` del usuario autenticado.
+4. Se modificó el estado de una tarea y se comprobó su actualización en Firestore.
+5. Se eliminó una tarea y se verificó su eliminación de la base de datos.
+6. Se comprobó que la lista de la aplicación se actualice automáticamente mediante el listener en tiempo real.
+7. Se utilizaron diferentes usuarios para comprobar que cada uno visualice únicamente sus propias tareas.
+
+### 🔧 Tecnologías incorporadas
+
+* Firebase Authentication
+* Cloud Firestore
+* AsyncStorage
 * Redux Toolkit
 * React Redux
 
-## 📱 Funcionalidades
-
-* Visualización de tareas mediante una lista.
-* Creación de nuevas tareas.
-* Clasificación de tareas por categoría.
-* Asignación de fechas.
-* Navegación hacia el detalle de cada tarea.
-* Cambio de estado entre pendiente y completada.
-* Eliminación de tareas.
-* Filtrado por:
-
-  * Todas
-  * Pendientes
-  * Completadas
-* Perfil de usuario.
-* Navegación mediante Stack Navigator y Bottom Tab Navigator.
-* Estado global sincronizado mediante Redux Toolkit.
-
-## 🗂️ Estado global con Redux Toolkit
-
-TaskFlow utiliza **Redux Toolkit** para centralizar el estado de las tareas.
-
-De esta manera, las diferentes pantallas acceden a la misma información y los cambios realizados en una tarea se reflejan automáticamente en toda la aplicación.
-
-La configuración de Redux se encuentra organizada principalmente en:
-
-* `src/store`: configuración del Store y hooks tipados.
-* `src/features/tasks/tasksSlice.ts`: Slice encargado del estado, reducers, acciones y selectores de las tareas.
-
-El componente principal de la aplicación se encuentra envuelto con `Provider`, permitiendo que las pantallas y componentes tengan acceso al Store.
-
-## ⚙️ Acciones implementadas
-
-El Slice de tareas incluye las siguientes acciones:
-
-### `addTask`
-
-Agrega una nueva tarea al estado global y genera automáticamente un identificador único mediante `nanoid()`.
-
-### `toggleTaskStatus`
-
-Permite cambiar el estado de una tarea entre completada y pendiente utilizando su ID.
-
-### `deleteTask`
-
-Elimina una tarea del estado global.
-
-### `setFilter`
-
-Modifica el filtro seleccionado para mostrar todas las tareas, únicamente las pendientes o únicamente las completadas.
-
-## 🔎 Selectores
-
-La aplicación utiliza selectores para acceder a la información almacenada en Redux.
-
-Entre ellos se encuentran selectores para:
-
-* Obtener todas las tareas.
-* Obtener las tareas filtradas.
-* Obtener el filtro seleccionado.
-* Buscar una tarea mediante su ID.
-* Obtener estadísticas de tareas completadas y pendientes.
-
-El filtrado de tareas se realiza mediante `selectFilteredTasks`, permitiendo mantener esta lógica dentro de Redux y evitando duplicarla en los componentes.
-
-## 🔄 Sincronización entre pantallas
-
-Al abrir el detalle de una tarea, la aplicación utiliza su ID para obtener la información directamente desde el Store.
-
-Cuando una tarea se marca como completada o pendiente desde la pantalla de detalle, Redux actualiza el estado global.
-
-Al regresar a la lista principal, el cambio se refleja automáticamente sin necesidad de mantener copias locales de las tareas.
-
-## 🎯 Filtros persistentes
-
-El filtro seleccionado también forma parte del estado global de Redux.
-
-Por este motivo, al seleccionar por ejemplo **Pendientes** y navegar hacia otra sección de la aplicación, el filtro permanece seleccionado al regresar a la pantalla de tareas.
-
-## 🧭 Navegación
-
-La aplicación utiliza **React Navigation** combinando:
-
-* Native Stack Navigator
-* Bottom Tab Navigator
-
-Esto permite organizar el flujo entre la lista de tareas, el detalle de cada tarea y el perfil del usuario.
-
-## 📂 Estructura principal
-
-```text
-src/
-├── assets/
-├── components/
-├── data/
-├── features/
-│   └── tasks/
-│       └── tasksSlice.ts
-├── navigation/
-├── screens/
-│   ├── profile/
-│   └── tasks/
-├── store/
-│   ├── hooks.ts
-│   └── index.ts
-├── theme/
-└── types/
-```
-
-## 📦 Instalación
-
-Clonar el repositorio:
-
-```bash
-git clone https://github.com/PaolaAguirreDG/taskflow.git
-```
-
-Ingresar al proyecto:
-
-```bash
-cd taskflow
-```
-
-Instalar las dependencias:
-
-```bash
-npm install
-```
-
-Iniciar Expo:
-
-```bash
-npx expo start
-```
-
-## 📚 Dependencias principales
-
-Para la gestión del estado global se utilizan:
-
-```text
-@reduxjs/toolkit
-react-redux
-```
-
-Para la navegación se utiliza React Navigation.
-
-## ✅ Módulo 06 – Redux Toolkit
-
-En este módulo se realizó la migración del manejo de tareas hacia un estado global utilizando Redux Toolkit.
-
-Se implementaron:
-
-* Store centralizado.
-* Provider de Redux.
-* Slice de tareas.
-* Acción para agregar tareas.
-* Acción para completar y descompletar tareas.
-* Acción para eliminar tareas.
-* Acción para modificar filtros.
-* Selectores para acceder y filtrar el estado.
-* Integración de Redux con la lista de tareas.
-* Integración de Redux con el formulario.
-* Integración de Redux con la pantalla de detalle.
-* Persistencia del filtro durante la navegación.
-* Sincronización del estado entre las diferentes pantallas.
-
-## 👩‍💻 Autora
-
-**Paola Aguirre**
-
-Proyecto desarrollado como parte del curso de **Desarrollo de Aplicaciones**.
+Con esta implementación, TaskFlow cuenta con autenticación, persistencia de sesión y almacenamiento de tareas en la nube asociado individualmente a cada usuario.
