@@ -1,45 +1,96 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { View, Text, FlatList, StyleSheet } from 'react-native'
 import { Task } from '../../types'
 import { spacing, colors, screenStyles } from '../../theme'
 import TaskItem from '../../components/TaskItem'
 import EmptyState from '../../components/EmptyState'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { TaskStackParamList } from '../../navigation/types'
+import FilterBar from '../../components/FilterBar'
 import TaskForm from '../../components/TaskForm'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { TaskStackParamList } from '../../navigation/types'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import {
-  selectFilteredTasks,
+  selectFilter,
   selectTaskStats,
-  toggleTaskStatus,
-  selectFilter
+  selectVisibleTasks,
+  setTasks
 } from '../../features/tasks/tasksSlice'
-import FilterBar from '../../components/FilterBar'
 
-type NavigationProp = NativeStackNavigationProp<TaskStackParamList, 'Tasks'>
+import { selectCurrentUser } from '../../features/auth/authSlice'
+
+import {
+  subscribeToTasks,
+  updateTaskStatus
+} from '../../services/tasks/tasksService'
+
+type Props = NativeStackScreenProps<TaskStackParamList, 'Tasks'>
 
 const keyExtractor = (item: Task) => item.id
 
-
-const TasksScreen = ({navigation}: {navigation: NavigationProp}) => {
+const TasksScreen = ({ navigation }: Props) => {
   const dispatch = useAppDispatch()
+  const user = useAppSelector(selectCurrentUser)
 
-  const tasks = useAppSelector(selectFilteredTasks)
+  const tasks = useAppSelector(selectVisibleTasks)
+  const filter = useAppSelector(selectFilter)
   const { pending, total } = useAppSelector(selectTaskStats)
 
+  useEffect(() => {
+    if (!user) return
+
+    const unsubscribe = subscribeToTasks(
+      user.uid,
+      (tasks) => {
+        dispatch(setTasks(tasks))
+      }
+    )
+
+    return unsubscribe
+  }, [user, dispatch])
+
   const toggleTask = useCallback(
-    (id: string) => {
-      dispatch(toggleTaskStatus(id))
+    async (id: string) => {
+      const task = tasks.find((task) => task.id === id)
+
+      if (!task) return
+
+      try {
+        await updateTaskStatus(
+          task.id,
+          !task.completed
+        )
+      } catch (error) {
+        console.error(
+          'Error al actualizar tarea:',
+          error
+        )
+      }
     },
-    [dispatch]
+    [tasks]
+  )
+
+  const openDetail = useCallback(
+    (task: Task) => {
+      navigation.navigate('TaskDetail', {
+        taskId: task.id
+      })
+    },
+    [navigation]
   )
 
   const renderItem = useCallback(
     ({ item }: { item: Task }) => {
-      return <TaskItem task={item} onToggle={toggleTask} onPress={() => navigation.navigate('TaskDetail', { taskId: item.id})} />
+      return (
+        <TaskItem
+          task={item}
+          onToggle={toggleTask}
+          onPress={openDetail}
+        />
+      )
     },
-    [toggleTask]
+    [toggleTask, openDetail]
   )
+
 
   return (
     <View style={screenStyles.container}>

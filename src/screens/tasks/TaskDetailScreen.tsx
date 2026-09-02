@@ -3,21 +3,24 @@ import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from '
 import { CATEGORIES, DUE_DATES } from '../../types'
 import { colors, radius, shadow, spacing, screenStyles } from '../../theme'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import type { TaskStackParamList } from '../../navigation/types'
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { deleteTask, selectTaskById, toggleTaskStatus } from '../../features/tasks/tasksSlice'
+import { TaskStackParamList } from '../../navigation/types'
+import { useAppSelector } from '../../store/hooks'
+import { selectTaskById } from '../../features/tasks/tasksSlice'
+import { removeTask, updateTaskStatus } from '../../services/tasks/tasksService'
 
 type Props = NativeStackScreenProps<TaskStackParamList, 'TaskDetail'>
 
-export default function TaskDetailScreen({ navigation, route }: Props) {
+export default function TaskDetailScreen({ navigation, route }: Props) { 
   const { taskId } = route.params
-  const dispatch = useAppDispatch()
 
-  const task = useAppSelector(selectTaskById(taskId))
+  const task = useAppSelector(
+    selectTaskById(taskId)
+  )
 
   if (!task) {
     return (
-      <View style={[
+      <View
+        style={[
           screenStyles.container,
           styles.missing
         ]}
@@ -47,13 +50,32 @@ export default function TaskDetailScreen({ navigation, route }: Props) {
 
   const cat = CATEGORIES[task.category]
 
-  const handleToggle = () => {
-    dispatch(toggleTaskStatus(task.id))
+  const handleToggle = async () => {
+    try {
+      await updateTaskStatus(
+        task.id,
+        !task.completed
+      )
+    } catch (error) {
+      console.error(
+        'Error al actualizar tarea:',
+        error
+      )
+    }
   }
-  const handleDelete = () => {
-    dispatch(deleteTask(task.id))
-    navigation.goBack()
+
+  const handleDelete = async () => {
+  try {
+    await removeTask(task.id)
+
+    navigation.navigate('Tasks')
+  } catch (error) {
+    console.error(
+      'Error al eliminar tarea:',
+      error
+    )
   }
+}
 
   return (
     <View style={screenStyles.container}>

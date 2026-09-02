@@ -1,14 +1,25 @@
 import React from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { colors, spacing, shadows } from '../../theme'
 import { useAppSelector } from '../../store/hooks'
 import { FILTERS, selectFilter, selectTaskStats } from '../../features/tasks/tasksSlice'
 import { name } from '../../data'
+import { logout } from '../../services/auth/authService'
 
 const ProfileScreen = () => {
   const { total, completed, pending } = useAppSelector(selectTaskStats)
   const filter = useAppSelector(selectFilter)
   const progress = total === 0 ? 0 : Math.round((completed / total) * 100)
+  const handleLogout = async () => {
+  try {
+    await logout()
+  } catch (error) {
+    console.error(
+      'Error al cerrar sesión:',
+      error
+    )
+  }
+}
   return (
     <View style={styles.container}>
 
@@ -28,7 +39,7 @@ const ProfileScreen = () => {
 
         <View style={styles.profileContent}>
 
-          <Text style={styles.name}>Paola Aguirre</Text>
+          <Text style={styles.name}>{name}</Text>
 
           <Text style={styles.role}>
             Diseñadora Gráfica · UX/UI
@@ -101,8 +112,21 @@ const ProfileScreen = () => {
         <Text style={styles.progressText}>
           {completed} de {total} tareas completadas
         </Text>
+        <Text style={styles.filterNote}>
+          Filtro activo en la lista:{' '}
+          <Text style={styles.filterValue}>
+            {FILTERS[filter]}
+          </Text>
+        </Text>
       </View>
-
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={handleLogout}
+      >
+        <Text style={styles.logoutText}>
+          Cerrar sesión
+        </Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -268,5 +292,28 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 13,
     color: colors.textSecondary
+  },
+  logoutButton: {
+    backgroundColor: colors.canvas,
+    borderRadius: 16,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.primaryDark
+  },
+
+  logoutText: {
+    color: colors.primaryDark,
+    fontWeight: '800',
+    fontSize: 15
+  },
+  filterNote: {
+    fontSize: 12,
+    color: colors.textSecondary
+  },
+
+  filterValue: {
+    fontWeight: '800',
+    color: colors.ink
   }
 })

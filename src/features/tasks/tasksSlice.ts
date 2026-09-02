@@ -5,13 +5,12 @@ import type { RootState } from '../../store'
 
 export type TaskFilter = 'all' | 'pending' | 'completed'
 
-export type NewTaskInput = Omit<Task, 'id' | 'completed'>
-
 export const FILTERS: Record<TaskFilter, string> = {
   all: 'Todas',
   pending: 'Pendientes',
   completed: 'Completadas'
 }
+export type NewTaskInput = Omit<Task, 'id' | 'completed'>
 
 type TasksState = {
   items: Task[]
@@ -19,7 +18,7 @@ type TasksState = {
 }
 
 const initialState: TasksState = {
-  items: SEED_TASKS,
+  items: [],
   filter: 'all'
 }
 
@@ -27,6 +26,8 @@ const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
+    // prepare genera el id único FUERA del reducer: los reducers son
+    // funciones puras y no pueden producir valores aleatorios.
     addTask: {
       prepare: (input: NewTaskInput) => ({
         payload: { id: nanoid(), completed: false, ...input } as Task
@@ -36,13 +37,16 @@ const tasksSlice = createSlice({
       }
     },
     toggleTaskStatus: (state, action: PayloadAction<string>) => {
-      const task = state.items.find((task) => task.id === action.payload)
+      const task = state.items.find((t) => t.id === action.payload)
       if (task) {
         task.completed = !task.completed
       }
     },
     deleteTask: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter((task) => task.id !== action.payload)
+      state.items = state.items.filter((t) => t.id !== action.payload)
+    },
+    setTasks: (state, action: PayloadAction<Task[]>) => {
+      state.items = action.payload
     },
     setFilter: (state, action: PayloadAction<TaskFilter>) => {
       state.filter = action.payload
@@ -50,34 +54,33 @@ const tasksSlice = createSlice({
   }
 })
 
-export const { addTask, toggleTaskStatus, deleteTask, setFilter } = tasksSlice.actions
+export const { addTask, toggleTaskStatus, deleteTask, setTasks, setFilter } = tasksSlice.actions
 export default tasksSlice.reducer
 
-//Selectores
+
 export const selectAllTasks = (state: RootState) => state.tasks.items
 export const selectFilter = (state: RootState) => state.tasks.filter
 
 export const selectTaskById = (id: string) => (state: RootState) =>
-  state.tasks.items.find((task) => task.id === id)
+  state.tasks.items.find((t) => t.id === id)
 
-export const selectFilteredTasks = createSelector(
+// createSelector memoiza: la lista filtrada solo se recalcula cuando
+// cambian items o filter, evitando re-renders por referencias nuevas.
+export const selectVisibleTasks = createSelector(
   [selectAllTasks, selectFilter],
-  (tasks, filter) => {
+  (items, filter) => {
     switch (filter) {
       case 'pending':
-        return tasks.filter((task) => !task.completed)
+        return items.filter((t) => !t.completed)
       case 'completed':
-        return tasks.filter((task) => task.completed)
+        return items.filter((t) => t.completed)
       default:
-        return tasks
+        return items
     }
   }
 )
 
-export const selectTaskStats = createSelector([selectAllTasks], (tasks) => {
-  const total = tasks.length
-  const completed = tasks.filter((task) => task.completed).length
-  const pending = total - completed
-
-  return { total, completed, pending }
+export const selectTaskStats = createSelector([selectAllTasks], (items) => {
+  const completed = items.filter((t) => t.completed).length
+  return { total: items.length, completed, pending: items.length - completed }
 })

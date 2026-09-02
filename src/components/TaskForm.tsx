@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {  KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -8,6 +8,10 @@ import type { TaskStackParamList } from '../navigation/types'
 import { colors, radius, shadow, spacing } from '../theme'
 import { useAppDispatch } from '../store/hooks'
 import { addTask } from '../features/tasks/tasksSlice'
+import { useAppSelector } from '../store/hooks'
+import { selectCurrentUser } from '../features/auth/authSlice'
+import { createTask } from '../services/tasks/tasksService'
+
 
 type TaskFormNavigationProp =
   NativeStackNavigationProp<TaskStackParamList, 'Tasks'>
@@ -17,6 +21,7 @@ const DATE_KEYS = Object.keys(DUE_DATES) as DueDate[]
 
 export default function TaskForm() {
   const dispatch = useAppDispatch()
+  const user = useAppSelector(selectCurrentUser)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<TaskFormNavigationProp>()
 
@@ -32,22 +37,33 @@ export default function TaskForm() {
 
   const close = () => setOpen(false)
 
-  const handleSubmit = () => {
-    if (!canSubmit) return
-    dispatch(
-      addTask({
-        title: title.trim(),
-        description: description.trim(),
-        category,
-        date
-      })
-    )
-    setTitle('')
-    setDescription('')
-    setCategory('personal')
-    setDate('today')
-    close()
-    navigation.navigate('Tasks')
+  const handleSubmit = async () => {
+    if (!canSubmit || !user) return
+
+    try {
+      await createTask(
+        {
+          title: title.trim(),
+          description: description.trim(),
+          category,
+          date,
+          completed: false
+        },
+        user.uid
+      )
+
+      setTitle('')
+      setDescription('')
+      setCategory('personal')
+      setDate('today')
+
+      close()
+    } catch (error) {
+      console.error(
+        'Error al crear tarea:',
+        error
+      )
+    }
   }
 
   return (
