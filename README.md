@@ -1,66 +1,49 @@
-## ✅ Módulo 07 – Firebase: Autenticación y Persistencia
+# TaskFlow
 
-En este módulo se integró **Firebase** a TaskFlow para incorporar autenticación de usuarios y persistencia de tareas en la nube.
+Aplicación móvil de gestión de tareas desarrollada con React Native y Expo. Permite crear una cuenta, organizar tareas y personalizar la foto de perfil.
 
-### 🔐 Autenticación
+## Funcionalidades
 
-La aplicación utiliza **Firebase Authentication** mediante email y contraseña.
+- Registro, inicio y cierre de sesión con Firebase Authentication.
+- Sesión persistente.
+- Creación, visualización, cambio de estado y eliminación de tareas.
+- Sincronización de tareas con Cloud Firestore según el usuario autenticado.
+- Filtros de tareas y estadísticas de progreso mediante Redux Toolkit.
+- Navegación por pestañas y pantallas de detalle.
+- Selección de foto de perfil desde la galería con Expo ImagePicker.
 
-Se implementaron los siguientes flujos:
+## Tecnologías
 
-* Registro de nuevos usuarios mediante `createUserWithEmailAndPassword`.
-* Inicio de sesión mediante `signInWithEmailAndPassword`.
-* Cierre de sesión mediante `signOut`.
-* Persistencia de sesión utilizando `AsyncStorage`.
-* Recuperación automática del usuario mediante `onAuthStateChanged`.
-* Navegación protegida: los usuarios no autenticados acceden al flujo de Login/Register y los usuarios autenticados acceden a la aplicación.
+React Native · Expo · TypeScript · Redux Toolkit · Firebase Authentication · Cloud Firestore · Expo ImagePicker
 
-El usuario autenticado también se almacena en Redux para que su información esté disponible en toda la aplicación.
+## Ejecutar el proyecto
 
-### ☁️ Persistencia con Cloud Firestore
+1. Clonar el repositorio y entrar en la rama de la entrega:
 
-Las tareas dejaron de almacenarse únicamente de forma local y ahora se guardan en una colección `tasks` de **Cloud Firestore**.
+   ```bash
+   git clone https://github.com/PaolaAguirreDG/taskflow.git
+   cd taskflow
+   git switch EntregaFinal-TaskFlow
+   ```
 
-Cada tarea contiene el `userId` correspondiente al usuario autenticado, permitiendo asociar los datos a su propietario.
+2. Instalar dependencias:
 
-Se implementaron las siguientes operaciones:
+   ```bash
+   npm install
+   ```
 
-* Crear nuevas tareas.
-* Obtener las tareas del usuario autenticado.
-* Actualizar su estado entre pendiente y completada.
-* Eliminar tareas.
-* Escuchar cambios en tiempo real mediante `onSnapshot`.
+3. Iniciar Expo:
 
-Las consultas a Firestore se filtran por `userId`, de manera que cada usuario visualiza únicamente sus propias tareas.
+   ```bash
+   npx expo start
+   ```
 
-Los datos obtenidos desde Firestore se sincronizan con el store de **Redux Toolkit**, manteniendo el funcionamiento de los filtros, contadores y estadísticas de tareas.
+4. Abrir la aplicación en Expo Go o en un emulador compatible.
 
-### 🧪 Pruebas realizadas
+## Video de funcionamiento
 
-Para verificar el flujo de autenticación se realizaron las siguientes pruebas:
+[Ver el flujo de autenticación, tareas y perfil](docs/flujo-taskflow.mp4)
 
-1. Registro de un nuevo usuario desde la pantalla de registro.
-2. Acceso automático a la aplicación después del registro.
-3. Cierre de sesión y posterior inicio de sesión con el usuario creado.
-4. Intento de inicio de sesión con credenciales incorrectas para comprobar la visualización del mensaje de error.
-5. Cierre y reapertura de la aplicación para comprobar que la sesión permanece activa.
+## Acceso a la aplicación
 
-Para verificar la persistencia de tareas:
-
-1. Se creó una nueva tarea desde TaskFlow.
-2. Se comprobó su aparición en la colección `tasks` de Firebase Firestore.
-3. Se verificó que el documento contenga el `userId` del usuario autenticado.
-4. Se modificó el estado de una tarea y se comprobó su actualización en Firestore.
-5. Se eliminó una tarea y se verificó su eliminación de la base de datos.
-6. Se comprobó que la lista de la aplicación se actualice automáticamente mediante el listener en tiempo real.
-7. Se utilizaron diferentes usuarios para comprobar que cada uno visualice únicamente sus propias tareas.
-
-### 🔧 Tecnologías incorporadas
-
-* Firebase Authentication
-* Cloud Firestore
-* AsyncStorage
-* Redux Toolkit
-* React Redux
-
-Con esta implementación, TaskFlow cuenta con autenticación, persistencia de sesión y almacenamiento de tareas en la nube asociado individualmente a cada usuario.
+**Enlace de Expo o build EAS:** pendiente de agregar.
