@@ -21,7 +21,11 @@
         "backgroundColor": "#c0aedd"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.pao.dgarg.taskflow"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +37,11 @@
           "photosPermission": "TaskFlow accede a tus fotos para que elijas tu imagen de perfil."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0a6a0eae-4e41-4e74-8683-b28d98e3cc85"
+      }
+    }
   }
 }

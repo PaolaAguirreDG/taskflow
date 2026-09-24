@@ -46,4 +46,4 @@ React Native · Expo · TypeScript · Redux Toolkit · Firebase Authentication �
 
 ## Acceso a la aplicación
 
-**Enlace de Expo o build EAS:** pendiente de agregar.
+**Build para Android:** [Instalar TaskFlow](https://expo.dev/accounts/pao.dgarg/projects/taskflow/builds/1f48701d-8632-4c76-8288-3b2292363faf)
