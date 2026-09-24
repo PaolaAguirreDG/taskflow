@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import { View, Text, FlatList, StyleSheet } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { Task } from '../../types'
 import { spacing, colors, screenStyles } from '../../theme'
 import TaskItem from '../../components/TaskItem'
@@ -9,6 +9,9 @@ import TaskForm from '../../components/TaskForm'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { TaskStackParamList } from '../../navigation/types'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
+
+import fallbackAvatar from '../../assets/avatarPaola.webp'
+
 import {
   selectFilter,
   selectTaskStats,
@@ -95,11 +98,25 @@ const TasksScreen = ({ navigation }: Props) => {
   return (
     <View style={screenStyles.container}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.brand}>TaskFlow</Text>
-          <Text style={styles.appSubtitle}>Listas, formulario y detalle</Text>
+        <View style={styles.brandRow}>
+          <View>
+            <Text style={styles.brand}>TaskFlow</Text>
+
+            <Text style={styles.appSubtitle}>{user?.email ?? 'Organizá tu día'}</Text>
+          </View>
+
+          <TouchableOpacity onPress={() => {
+            navigation.getParent()?.navigate('ProfileStack')
+          }}>
+            <Image
+              source={user?.photoURL ? { uri: user.photoURL } : fallbackAvatar}
+              style={styles.headerAvatar}
+            />
+          </TouchableOpacity>
         </View>
-         <View style={styles.divider} />
+
+        <View style={styles.divider} />        
+
         <View style={styles.titleRow}>
           <Text style={styles.title}>Mis tareas</Text>
           <View style={styles.counter}>
@@ -162,6 +179,19 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 15
   },
+
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+
+  headerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20
+  },
+
   subtitle: {
     fontSize: 14,
     color: colors.muted

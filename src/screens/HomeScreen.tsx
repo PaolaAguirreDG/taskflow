@@ -50,8 +50,6 @@ const HomeScreen = () => {
       completed: false,
     }
 
-    console.log(newTask)
-
     setTaskList((prev) => [newTask, ...prev])
 
     Alert.alert('Éxito', 'Tarea capturada localmente.')

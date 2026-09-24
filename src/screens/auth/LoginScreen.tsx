@@ -12,8 +12,10 @@ const LoginScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleLogin = async () => {
+    setLoading(true)
     setError('')
 
     if (!email.trim() || !password) {
@@ -26,6 +28,8 @@ const LoginScreen = ({ navigation }: Props) => {
     } catch (error) {
       console.error(error)
       setError('Email o contraseña incorrectos')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -52,23 +56,18 @@ const LoginScreen = ({ navigation }: Props) => {
         secureTextEntry
       />
 
-      {error ? (
-        <Text style={styles.error}>{error}</Text>
-      ) : null}
+      {error ? <Text style={styles.error}>{error}</Text> : null} 
 
-      <Pressable
-        style={styles.button}
+      <Pressable 
+        style={{...styles.button, opacity: loading ? 0.5 : 1 }}
         onPress={handleLogin}
+        disabled={loading}
       >
-        <Text style={styles.buttonText}>Ingresar</Text>
+        <Text style={styles.buttonText}>{loading ? 'Ingresando...' : 'Ingresar'}</Text>
       </Pressable>
 
-      <Pressable
-        onPress={() => navigation.navigate('Register')}
-      >
-        <Text style={styles.link}>
-          ¿No tenés una cuenta? Registrate
-        </Text>
+      <Pressable onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.link}>¿No tenés una cuenta? Registrate</Text>
       </Pressable>
     </View>
   )

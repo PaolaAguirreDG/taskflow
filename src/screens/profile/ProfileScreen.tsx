@@ -1,25 +1,96 @@
 import React from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { ActivityIndicator, Alert, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import Ionicons from '@react-native-vector-icons/ionicons'
 import { colors, spacing, shadows } from '../../theme'
-import { useAppSelector } from '../../store/hooks'
-import { FILTERS, selectFilter, selectTaskStats } from '../../features/tasks/tasksSlice'
 import { name } from '../../data'
+import { useState } from 'react'
+import * as ImagePicker from 'expo-image-picker'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { FILTERS, selectFilter, selectTaskStats } from '../../features/tasks/tasksSlice'
+import { selectCurrentUser, selectUserPhoto, setUserPhoto } from '../../features/auth/authSlice'
+import { updateUserPhoto } from '../../services/profile/profileService'
 import { logout } from '../../services/auth/authService'
+import fallbackAvatar from '../../assets/avatarPaola.webp'
+
+const AVATAR_SIZE = 88
 
 const ProfileScreen = () => {
+  const dispatch = useAppDispatch()
+  const user = useAppSelector(selectCurrentUser)
   const { total, completed, pending } = useAppSelector(selectTaskStats)
   const filter = useAppSelector(selectFilter)
+
+  const [isSaving, setIsSaving] = useState(false)
+  const [coverUri, setCoverUri] = useState<string | null>(null)
+
   const progress = total === 0 ? 0 : Math.round((completed / total) * 100)
+
+  const userPhoto = useAppSelector(selectUserPhoto)
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permisos requeridos',
+        'Necesitamos acceso a tu galería para cambiar la foto de perfil.'
+      )
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    })
+
+    if (result.canceled) return
+
+    await savePhoto(result.assets[0].uri)
+  }
+
+
+  const savePhoto = async (photoURI: string) => {
+    if (!user) return
+    setIsSaving(true)
+
+    try {
+      await updateUserPhoto(user.uid, photoURI)
+      dispatch(setUserPhoto(photoURI))
+    } catch (err) {
+      Alert.alert('Error', 'No se pudo actualizar la foto de perfil.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+  
+
   const handleLogout = async () => {
-  try {
-    await logout()
-  } catch (error) {
-    console.error(
-      'Error al cerrar sesión:',
-      error
-    )
+    try {
+      await logout()
+    } catch (error) {
+      console.error(
+        'Error al cerrar sesión:',
+        error
+      )
+    }
+  }
+
+  const pickCoverImage = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ['images'],
+    allowsEditing: true,
+    aspect: [3, 1],
+    quality: 0.7,
+  })
+
+  if (!result.canceled && result.assets[0]) {
+    setCoverUri(result.assets[0].uri)
   }
 }
+
+
   return (
     <View style={styles.container}>
 
@@ -31,11 +102,36 @@ const ProfileScreen = () => {
           imageStyle={styles.coverImage}
         >
           <View style={styles.overlay} />
-          <Image
-            source={require('../../assets/avatar2.webp')}
-            style={styles.avatar}
-          />
+
+          <TouchableOpacity
+            style={styles.coverEditButton}
+            onPress={pickCoverImage}
+            accessibilityLabel="Cambiar imagen de portada"
+          >
+            <Ionicons name="pencil" size={16} color={colors.white} />
+          </TouchableOpacity>
         </ImageBackground>
+
+          <TouchableOpacity 
+            style={styles.avatarWrapper} 
+            onPress={pickImage} 
+            disabled={isSaving}
+            activeOpacity={0.8}
+          >
+            <Image
+              source={user?.photoURL ? { uri: user.photoURL } : fallbackAvatar}
+              style={styles.avatar}
+            />
+            {isSaving ? (
+              <View style={styles.avatarOverlay}>
+                <ActivityIndicator color={colors.surface} />
+              </View>
+            ) : (
+              <View style={styles.avatarBadge}>
+                <Ionicons name="camera" size={14} color={colors.surface} />
+              </View>
+            )}
+        </TouchableOpacity>
 
         <View style={styles.profileContent}>
 
@@ -158,24 +254,67 @@ const styles = StyleSheet.create({
   },
 
   overlay: {
-  position: 'absolute',
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
-  backgroundColor: `${colors.primaryDark}70`
-},
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: `${colors.primaryDark}70`
+  },
 
-  avatar: {
+  coverEditButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 30,
+    height: 30,
+    borderRadius: 18,
+    backgroundColor: colors.primary,
+    borderWidth: 2,
+    borderColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
+  },
+
+  avatarWrapper: {
+    position: 'absolute',
+    top: 75,              
+    left: spacing.lg,
     width: 90,
     height: 90,
-    borderRadius: 45,
-    position: 'absolute',
-    left: spacing.lg,
-    bottom: -45,
-    borderWidth: 4,
-    borderColor: colors.white,
-    boxShadow: shadows.avatarShadow
+    zIndex: 2,
+  },
+
+  avatar: {
+  width: 90,
+  height: 90,
+  borderRadius: 45,
+  borderWidth: 4,
+  borderColor: colors.white,
+  boxShadow: shadows.avatarShadow,
+  },
+
+  avatarOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: AVATAR_SIZE / 2,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  
+  avatarBadge: {
+  position: 'absolute',
+  right: 0,
+  bottom: 0,
+  width: 32,
+  height: 32,
+  borderRadius: 16,
+  backgroundColor: colors.primary,
+  borderWidth: 3,
+  borderColor: colors.white,
+  alignItems: 'center',
+  justifyContent: 'center',
   },
 
   profileContent: {
