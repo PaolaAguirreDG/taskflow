@@ -20,6 +20,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
     if (!email.trim() || !password) {
       setError('Completá email y contraseña')
+      setLoading(false)
       return
     }
 

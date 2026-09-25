@@ -6,8 +6,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { CATEGORIES, Category, DueDate, DUE_DATES } from '../types'
 import type { TaskStackParamList } from '../navigation/types'
 import { colors, radius, shadow, spacing } from '../theme'
-import { useAppDispatch } from '../store/hooks'
-import { addTask } from '../features/tasks/tasksSlice'
 import { useAppSelector } from '../store/hooks'
 import { selectCurrentUser } from '../features/auth/authSlice'
 import { createTask } from '../services/tasks/tasksService'
@@ -20,7 +18,6 @@ const CATEGORY_KEYS = Object.keys(CATEGORIES) as Category[]
 const DATE_KEYS = Object.keys(DUE_DATES) as DueDate[]
 
 export default function TaskForm() {
-  const dispatch = useAppDispatch()
   const user = useAppSelector(selectCurrentUser)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<TaskFormNavigationProp>()
